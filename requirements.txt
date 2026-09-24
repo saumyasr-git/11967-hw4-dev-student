@@ -1,11 +1,11 @@
-torch == 2.2.2
-einops
-numpy < 2.0.0
-pytest
-omegaconf
-tiktoken
-tqdm
-datasets
-wandb
-transformers
-rich
+torch==2.2.2
+numpy==1.26.4
+einops==0.8.0
+pytest==8.3.2
+omegaconf==2.3.0
+tiktoken==0.7.0
+tqdm==4.66.5
+datasets==2.21.0
+wandb==0.17.7
+transformers==4.44.2
+rich==13.7.1

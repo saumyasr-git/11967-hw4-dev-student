@@ -4,7 +4,6 @@ from tokenizer.bpe import ASCIIBPETokenizer, string_to_ascii
 
 from pytest_utils.decorators import max_score
 
-
 def test_not_injective():
     # you can try to break "google-bert/bert-base-cased"
     # or another tokenizer you like: https://huggingface.co/models?pipeline_tag=text-generation
@@ -12,8 +11,8 @@ def test_not_injective():
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 
     # TODO: find an example
-    s1 = ...
-    s2 = ...
+    s1 = "hello"
+    s2 = "hello "
 
     assert s1 != s2 and tokenizer.encode(
         s1, add_special_tokens=False
@@ -27,8 +26,7 @@ def test_not_invertible():
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 
     # TODO: find an example
-    s = ...
-
+    s = "dum "
     s_recovered = tokenizer.decode(tokenizer.encode(s, add_special_tokens=False))
     assert s != s_recovered
 
@@ -40,8 +38,8 @@ def test_not_preserving_concat():
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 
     # TODO: find an example
-    a = ...
-    b = ...
+    a = "ear"
+    b = "piece"
     assert tokenizer.encode(a + b, add_special_tokens=False) != tokenizer.encode(
         a, add_special_tokens=False
     ) + tokenizer.encode(b, add_special_tokens=False)

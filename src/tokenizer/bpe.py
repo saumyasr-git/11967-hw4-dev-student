@@ -99,7 +99,19 @@ class ASCIIBPETokenizer:
         """
 
         # TODO: Implement this function
-        return ...
+        bigram_stats = compute_bigram_statistics(token_ids)
+       
+        most_common_bigram = min(bigram_stats.items(), key=lambda item: (-item[1], item[0]))
+
+
+        bigram, count = most_common_bigram
+        print("Most frequent bigram:", bigram, "with count:", count)
+
+        new_id = len(self.vocab)
+        self.vocab.append("".join(self.vocab[i] for i in bigram))
+        self.merge_rules[bigram] = new_id
+        
+        return replace_bigram(token_ids, bigram, new_id)
 
     def encode(self, text: str) -> list[int]:
         """Convert text to tokens.
@@ -112,9 +124,24 @@ class ASCIIBPETokenizer:
         """
 
         assert all(ord(c) < 128 for c in text), "input text is not ASCII"
+        token_ids = string_to_ascii(text)
+        while True:
+            merged = False
 
-        # TODO: Implement this function
-        token_ids = ...
+            i = 0
+            while i < len(token_ids) - 1:
+                bigram = (token_ids[i], token_ids[i+1])
+
+                if bigram in self.merge_rules:
+                    new_id = self.merge_rules[bigram]
+                    token_ids = replace_bigram(token_ids, bigram, new_id)
+                    merged = True
+                    break   
+
+                i += 1
+
+            if not merged:
+                break
         return token_ids
 
     def decode(self, token_ids: list[int]) -> str:
@@ -128,7 +155,28 @@ class ASCIIBPETokenizer:
         """
 
         # TODO: Implement this function
-        return ...
+
+        decode_rule = {new_id: bigram for bigram, new_id in self.merge_rules.items()}
+
+        
+        changed = True
+        while changed:
+            changed = False
+            new_list = []
+
+            for token in token_ids:
+                if token in decode_rule:
+                    left, right = decode_rule[token]
+                    new_list.extend([left, right])
+                    changed = True
+                else:
+                    new_list.append(token)
+
+            token_ids = new_list
+
+        # convert final ASCII IDs back to characters
+        return "".join(chr(t) for t in token_ids)
+       
 
     @classmethod
     def from_config(cls, config_file: str):
